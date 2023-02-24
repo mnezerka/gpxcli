@@ -6,6 +6,7 @@ on:
 jobs:
   releases-matrix:
     name: Release gpxcli
+    permissions: write-all
     runs-on: ubuntu-latest
     strategy:
       matrix:

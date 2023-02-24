@@ -1,5 +1,7 @@
 # GpxCli
 
+![Release Build](https://github.com/mnezerka/gpxcli/actions/workflows/release.yml/badge.svg?event=release)
+
 Tool for mainipulation with gpx files
 
 ## Merge

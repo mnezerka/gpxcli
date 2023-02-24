@@ -4,6 +4,7 @@ on:
     types: [created]
 
 jobs:
+  permissions: write-all
   releases-matrix:
     name: Release gpxcli
     runs-on: ubuntu-latest

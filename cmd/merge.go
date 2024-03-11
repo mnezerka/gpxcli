@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -112,7 +112,7 @@ var mergeCmd = &cobra.Command{
 		} else if config_merge_output_gpx {
 			return errors.New("gpx format output not implemented yet")
 		}
-		err = ioutil.WriteFile(output, data, 0644)
+		err = os.WriteFile(output, data, 0644)
 		if err != nil {
 			return err
 		}

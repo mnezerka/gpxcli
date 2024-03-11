@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -31,8 +31,11 @@ var simplifyCmd = &cobra.Command{
 		gpxFile.SimplifyTracks(float64(config_simplify_min_distance))
 
 		xmlData, err := gpxFile.ToXml(gpx.ToXmlParams{Version: "1.1", Indent: true})
+		if err != nil {
+			return err
+		}
 
-		err = ioutil.WriteFile(config_simplify_output, xmlData, 0644)
+		err = os.WriteFile(config_simplify_output, xmlData, 0644)
 		if err != nil {
 			return err
 		}

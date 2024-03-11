@@ -17,3 +17,7 @@ gpxcli
 
 # test outputs
 output.*
+
+examples
+
+.vscode

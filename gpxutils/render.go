@@ -11,18 +11,18 @@ import (
 	"github.com/tkrajina/gpxgo/gpx"
 )
 
-var ColorPalette = [...]color.Color{
-	color.RGBA{0xff, 0, 0, 0xff},
-	color.RGBA{0, 0xff, 0, 0xff},
-	color.RGBA{0, 0, 0xff, 0xff},
+var ColorPalette = [...]color.RGBA{
+	{0xaf, 0, 0, 0xff},
+	{0, 0xaf, 0, 0xff},
+	{0, 0, 0xaf, 0xff},
 }
 
 type RenderTrackData struct {
 	Points []gpx.GPXPoint
-	Color  color.Color
+	Color  color.RGBA
 }
 
-func GetColorForIndex(i int) color.Color {
+func GetColorForIndex(i int) color.RGBA {
 	i = i % len(ColorPalette)
 	return ColorPalette[i]
 }

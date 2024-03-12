@@ -21,3 +21,7 @@ output.*
 examples
 
 .vscode
+.DS_Store
+*html
+*json
+*png

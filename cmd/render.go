@@ -3,11 +3,24 @@
 package cmd
 
 import (
+	"fmt"
 	"mnezerka/gpxcli/gpxutils"
+	"os"
+	"strings"
+	"text/template"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
 	"github.com/tkrajina/gpxgo/gpx"
+)
+
+var (
+	ConfigRender struct {
+		Output     string
+		OutputPng  bool
+		OutputHtml bool
+		Points     bool
+	}
 )
 
 var renderCmd = &cobra.Command{
@@ -31,9 +44,9 @@ var renderCmd = &cobra.Command{
 			}
 
 			l.Infof("Track (%s)", gpx.Name)
-			l.Infof("  - length 2D: %f", gpx.Length2D())
-			l.Infof("  - length 3D: %f", gpx.Length3D())
-			l.Infof("  - tracks: %d", len(gpx.Tracks))
+			l.Infof("  length 2D: %.1fkm", gpx.Length2D()/1000)
+			l.Infof("  length 3D: %.1fkm", gpx.Length3D()/1000)
+			l.Infof("  tracks: %d", len(gpx.Tracks))
 
 			points, err := gpxutils.GpxFileToPoints(gpx)
 			if err != nil {
@@ -44,14 +57,83 @@ var renderCmd = &cobra.Command{
 				Points: points,
 				Color:  gpxutils.GetColorForIndex(file_ix),
 			})
+		}
 
-			gpxutils.RenderTracks(toRender)
+		if ConfigRender.OutputPng {
+			err := gpxutils.RenderTracks(toRender)
+			if err != nil {
+				return err
+			}
+		} else if ConfigRender.OutputHtml {
+			err := renderHtml(toRender)
+			if err != nil {
+				return err
+			}
 		}
 
 		return nil
 	},
 }
 
+func renderHtml(tracks []gpxutils.RenderTrackData) error {
+
+	mapHtml, err := templatesContent.ReadFile("cmd/templates/map.html")
+	if err != nil {
+		if _, ok := err.(*os.PathError); ok {
+			return fmt.Errorf("template '%s' does not exist", "map.html")
+		}
+
+		// unknown error
+		return err
+	}
+
+	geoJson, err := gpxutils.RenderTracksDataToGeoJson(tracks, ConfigRender.Points)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := template.New("map-html").Parse(string(mapHtml))
+	if err != nil {
+		return err
+	}
+
+	fhtml, err := os.Create(ConfigRender.Output + ".html")
+	if err != nil {
+		return err
+	}
+
+	err = tpl.Execute(fhtml, strings.ReplaceAll(string(geoJson), "\"", "\\\""))
+	if err != nil {
+		return err
+	}
+
+	fhtml.Close()
+
+	/*err = os.WriteFile(ConfigRender.Output+".html", mapHtml, 0644)
+	if err != nil {
+		return err
+	}
+
+
+	// write geojson to file
+	err = os.WriteFile(ConfigRender.Output+".json", geoJson, 0644)
+	if err != nil {
+		return err
+	}
+	*/
+
+	return nil
+}
+
 func init() {
 	rootCmd.AddCommand(renderCmd)
+
+	renderCmd.Flags().StringVarP(&ConfigRender.Output, "output", "o", "map", "Output file path without extension (will be added based on output format)")
+
+	renderCmd.Flags().BoolVar(&ConfigRender.OutputPng, "png", false, "Output in PNG format")
+	renderCmd.Flags().BoolVar(&ConfigRender.OutputHtml, "html", true, "Output in HTML format")
+	renderCmd.MarkFlagsMutuallyExclusive("png", "html")
+
+	renderCmd.Flags().BoolVar(&ConfigRender.Points, "points", false, "Draw symbol (circle) for each track point")
+
 }

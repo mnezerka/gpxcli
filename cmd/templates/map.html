@@ -57,7 +57,7 @@
 
         // draw circles instead of markers for features of type Point
         function pointFunc(geoJsonPoint, latlng) {
-            return L.circle(latlng, {radius: 10})
+            return L.circle(latlng, {radius: 5})
         }
         
         var tracksLayer = L.geoJSON(

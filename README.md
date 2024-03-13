@@ -25,3 +25,16 @@ minimal distance (in megetrs) between points (track simplification):
 ```bash
 ./gpxcli merge --min-distance 20 --output all --yaml gpx/*
 ```
+
+## Doc
+
+Coordinates, in this context, are points of intersection in a grid system. GPS
+coordinates are usually expressed as the combination of latitude and longitude.
+
+Lines of **latitude** coordinates measure degrees of distance north and south from
+the equator, which is 0 degrees. The north pole and south pole are at 90
+degrees in either direction.
+
+The prime meridian, located in Greenwich, UK, is 0 degrees **longitude**, and the
+lines of longitude coordinates are measured according to 90 degrees east and
+west from that point.

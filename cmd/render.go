@@ -3,11 +3,7 @@
 package cmd
 
 import (
-	"fmt"
 	"mnezerka/gpxcli/gpxutils"
-	"os"
-	"strings"
-	"text/template"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"
@@ -65,7 +61,12 @@ var renderCmd = &cobra.Command{
 				return err
 			}
 		} else if ConfigRender.OutputHtml {
-			err := renderHtml(toRender)
+			mapHtml, err := GetTempalteContent("cmd/templates/map.html")
+			if err != nil {
+				return err
+			}
+
+			err = gpxutils.RenderHtml(toRender, ConfigRender.Output+".html", mapHtml, ConfigRender.Points)
 			if err != nil {
 				return err
 			}
@@ -73,56 +74,6 @@ var renderCmd = &cobra.Command{
 
 		return nil
 	},
-}
-
-func renderHtml(tracks []gpxutils.RenderTrackData) error {
-
-	mapHtml, err := templatesContent.ReadFile("cmd/templates/map.html")
-	if err != nil {
-		if _, ok := err.(*os.PathError); ok {
-			return fmt.Errorf("template '%s' does not exist", "map.html")
-		}
-
-		// unknown error
-		return err
-	}
-
-	geoJson, err := gpxutils.RenderTracksDataToGeoJson(tracks, ConfigRender.Points)
-	if err != nil {
-		return err
-	}
-
-	tpl, err := template.New("map-html").Parse(string(mapHtml))
-	if err != nil {
-		return err
-	}
-
-	fhtml, err := os.Create(ConfigRender.Output + ".html")
-	if err != nil {
-		return err
-	}
-
-	err = tpl.Execute(fhtml, strings.ReplaceAll(string(geoJson), "\"", "\\\""))
-	if err != nil {
-		return err
-	}
-
-	fhtml.Close()
-
-	/*err = os.WriteFile(ConfigRender.Output+".html", mapHtml, 0644)
-	if err != nil {
-		return err
-	}
-
-
-	// write geojson to file
-	err = os.WriteFile(ConfigRender.Output+".json", geoJson, 0644)
-	if err != nil {
-		return err
-	}
-	*/
-
-	return nil
 }
 
 func init() {

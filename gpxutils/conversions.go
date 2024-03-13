@@ -15,6 +15,11 @@ func DegreesToRadians(d float64) float64 {
 	return d * math.Pi / 180
 }
 
+// converts an angle from radians to degrees.
+func RadiansToDegrees(r float64) float64 {
+	return r * 180 / math.Pi
+}
+
 // Join all the points from all tracks and segments for the track into a single list
 // func GpxToPoints(gpx *gpx.GPX) (error, []gpx.GPXPoint) {
 func GpxFileToPoints(gpxFile *gpx.GPX) ([]gpx.GPXPoint, error) {
@@ -84,4 +89,12 @@ func GpxPointsToGeoJson(points []gpx.GPXPoint) ([]byte, error) {
 	}
 
 	return rawJson, nil
+}
+
+func Reverse(points []gpx.GPXPoint) ([]gpx.GPXPoint, error) {
+	for i, j := 0, len(points)-1; i < j; i, j = i+1, j-1 {
+		points[i], points[j] = points[j], points[i]
+	}
+
+	return points, nil
 }

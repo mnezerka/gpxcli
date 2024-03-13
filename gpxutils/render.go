@@ -2,6 +2,9 @@ package gpxutils
 
 import (
 	"image/color"
+	"os"
+	"strings"
+	"text/template"
 
 	sm "github.com/flopp/go-staticmaps"
 
@@ -30,7 +33,7 @@ func GetColorForIndex(i int) color.RGBA {
 func RenderTracks(tracks []RenderTrackData) error {
 
 	l := log.WithFields(log.Fields{
-		"comp": "gpxutils/render",
+		"comp": "gpxutils/RenderTracks",
 	})
 
 	ctx := sm.NewContext()
@@ -61,6 +64,39 @@ func RenderTracks(tracks []RenderTrackData) error {
 	if err := gg.SavePNG("my-map.png", img); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func RenderHtml(tracks []RenderTrackData, filePath string, mapHtml []byte, renderPoints bool) error {
+
+	l := log.WithFields(log.Fields{
+		"comp": "gpxutils/RenderHtml",
+	})
+
+	l.Infof("Rendering to html '%s', tracks-count: %d", filePath, len(tracks))
+
+	geoJson, err := RenderTracksDataToGeoJson(tracks, renderPoints)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := template.New("map-html").Parse(string(mapHtml))
+	if err != nil {
+		return err
+	}
+
+	fhtml, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+
+	err = tpl.Execute(fhtml, strings.ReplaceAll(string(geoJson), "\"", "\\\""))
+	if err != nil {
+		return err
+	}
+
+	fhtml.Close()
 
 	return nil
 }

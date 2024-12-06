@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"mnezerka/gpxcli/gpxutils"
+	"github.com/mnezerka/gpxcli/gpxutils"
 	"os"
 
 	"github.com/apex/log"

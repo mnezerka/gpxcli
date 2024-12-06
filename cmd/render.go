@@ -3,7 +3,7 @@
 package cmd
 
 import (
-	"mnezerka/gpxcli/gpxutils"
+	"github.com/mnezerka/gpxcli/gpxutils"
 
 	"github.com/apex/log"
 	"github.com/spf13/cobra"

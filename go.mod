@@ -1,4 +1,4 @@
-module mnezerka/gpxcli
+module github.com/mnezerka/gpxcli
 
 go 1.19
 

@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
-	"mnezerka/gpxcli/cmd"
+	"github.com/mnezerka/gpxcli/cmd"
 	"os"
 
 	"github.com/apex/log"

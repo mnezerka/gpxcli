@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mnezerka/gpxcli/gpxutils"
 	"image/color"
-	"mnezerka/gpxcli/gpxutils"
 	"os"
 	"strings"
 	"text/template"
